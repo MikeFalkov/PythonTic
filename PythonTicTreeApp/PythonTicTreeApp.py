@@ -92,17 +92,23 @@ def XorO():
         else:
             print('Invalid response.')
 
-def play(node):
-    if XorO():
-        while True:
-            printBoard(node.board)
-            t = computerMove(playerMove(node))
-            printBoard(t.board)
-            if t.state != 0:
-                print(t.state)
-                break
-    else:
-        b = computerMove(tree.childNodes)
+def playForPlayer(node):
+    printBoard(node.board)
+    node = computerMove(playerMove(node))
+    printBoard(node.board)
+    if node.state != 0:
+        print(node.state)
+        return
+    playForPlayer(node)
+
+def playForComputer(node):
+    node = computerMove(node)
+    if node.state != 0:
+        print(node.state)
+        return
+    printBoard(node.board)
+    node = playerMove(node)
+    playForComputer(node)
 
 def playAgain():
     print('Do you want to play again? (yes or no)')
@@ -112,12 +118,14 @@ def playAgain():
 
 tree = Node(None, None)
 
-play(tree)
+#play(tree)
 
 while True:
-    play(tree)
+    if XorO():
+        playForPlayer(tree)
+    else:
+        playForComputer(tree)
     if not playAgain():
         break
-
 
 pass
