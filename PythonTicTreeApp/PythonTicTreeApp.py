@@ -119,6 +119,11 @@ def playForPlayer(node):
     computer = computerMove(player)
     printBoard(computer.board)
     if computer.state != 0:
+        print("Computer wins!!!")
+        print(computer.state)
+        return
+    if computer.childNodes is None:
+        print("It's a Draw.")
         print(computer.state)
         return
     playForPlayer(computer)
@@ -127,6 +132,11 @@ def playForComputer(node):
     computer = computerMove(node)
     printBoard(computer.board)
     if computer.state != 0:
+        print("Computer wins!!!")
+        print(computer.state)
+        return
+    if computer.childNodes is None:
+        print("It's a Draw.")
         print(computer.state)
         return
     player = playerMove(computer)
