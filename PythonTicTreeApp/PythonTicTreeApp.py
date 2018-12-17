@@ -56,7 +56,7 @@ def computerMove(parentNode):
     try:
         for n in parentNode.childNodes:
             if n.state != 0:
-                bestMove = n
+                return n
     except:
         return parentNode.childNodes
 
@@ -67,7 +67,6 @@ def computerMove(parentNode):
 
     maxWins = max([n.maxWins for n in parentNode.childNodes])
     bestMove = next(n for n in parentNode.childNodes if n.maxWins == maxWins)
-
     return bestMove
 
 def printBoard(board):
@@ -116,15 +115,14 @@ def XorO():
 def playForPlayer(node):
     #node = computerMove(playerMove(node))
     player = playerMove(node)
+    if player.childNodes == []:
+        printBoard(player.board)
+        print("It's a Draw.")
+        return
     computer = computerMove(player)
     printBoard(computer.board)
     if computer.state != 0:
         print("Computer wins!!!")
-        print(computer.state)
-        return
-    if computer.childNodes is None:
-        print("It's a Draw.")
-        print(computer.state)
         return
     playForPlayer(computer)
 
@@ -133,11 +131,9 @@ def playForComputer(node):
     printBoard(computer.board)
     if computer.state != 0:
         print("Computer wins!!!")
-        print(computer.state)
         return
-    if computer.childNodes is None:
+    if computer.childNodes == []:
         print("It's a Draw.")
-        print(computer.state)
         return
     player = playerMove(computer)
     playForComputer(player)
@@ -147,9 +143,7 @@ def playAgain():
     return input().lower().startswith('y')
 
 
-
 tree = Node(None, None)
-
 while True:
     if XorO():
         printBoard(tree.board)
@@ -158,5 +152,3 @@ while True:
         playForComputer(tree)
     if not playAgain():
         break
-
-pass
