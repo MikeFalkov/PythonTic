@@ -17,12 +17,21 @@ class Node(object) :
         
         if not self.childNodes is None:
             self.maxWins = getMaxWins(self)
+            self.score = getScore(self)
         else:
             self.maxWins = self.state
+            self.score = self.state
 
 def getMaxWins(node):
     maxWins = sum([k.maxWins for k in node.childNodes])
     return maxWins
+
+def getScore(node):
+    try:
+        score = max([s.state for s in node.childNodes])
+    except:
+        score = node.state
+    return score
 
 def addChildren(parentNode):
     if parentNode.state == 0:
@@ -31,23 +40,35 @@ def addChildren(parentNode):
         return None
 
 def availableMoves(board):
-    return [k for k, v in enumerate(board) if v is None]
+    return [k+1 for k, v in enumerate(board) if v is None]
 
 def findNode(nodes, move):
     return next(n for n in nodes if n.move == move)
 
 def playerMove(node):
     move = int(input("Your Move: "))
+    #x = availableMoves(node.board)
     if move in availableMoves(node.board):
         return findNode(node.childNodes, move)
 
 def computerMove(parentNode):
     bestMove = None
-    for n in parentNode.childNodes:
-        if n.state != 0:
-            return n
+    try:
+        for n in parentNode.childNodes:
+            if n.state != 0:
+                bestMove = n
+    except:
+        return parentNode.childNodes
+
+    if parentNode.isX == 1:
+        score = min([s.score for s in parentNode.childNodes])
+        bestMove = next(n for n in parentNode.childNodes if n.score == score)
+        return bestMove
+
     maxWins = max([n.maxWins for n in parentNode.childNodes])
-    return next(n for n in parentNode.childNodes if n.maxWins == maxWins)
+    bestMove = next(n for n in parentNode.childNodes if n.maxWins == maxWins)
+
+    return bestMove
 
 def printBoard(board):
         b = [" "]*9
@@ -93,22 +114,23 @@ def XorO():
             print('Invalid response.')
 
 def playForPlayer(node):
-    printBoard(node.board)
-    node = computerMove(playerMove(node))
-    printBoard(node.board)
-    if node.state != 0:
-        print(node.state)
+    #node = computerMove(playerMove(node))
+    player = playerMove(node)
+    computer = computerMove(player)
+    printBoard(computer.board)
+    if computer.state != 0:
+        print(computer.state)
         return
-    playForPlayer(node)
+    playForPlayer(computer)
 
 def playForComputer(node):
-    node = computerMove(node)
-    if node.state != 0:
-        print(node.state)
+    computer = computerMove(node)
+    printBoard(computer.board)
+    if computer.state != 0:
+        print(computer.state)
         return
-    printBoard(node.board)
-    node = playerMove(node)
-    playForComputer(node)
+    player = playerMove(computer)
+    playForComputer(player)
 
 def playAgain():
     print('Do you want to play again? (yes or no)')
@@ -118,10 +140,9 @@ def playAgain():
 
 tree = Node(None, None)
 
-#play(tree)
-
 while True:
     if XorO():
+        printBoard(tree.board)
         playForPlayer(tree)
     else:
         playForComputer(tree)
