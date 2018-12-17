@@ -24,7 +24,6 @@ class Node(object) :
 
 def getMaxWins(node):
     return sum([k.maxWins for k in node.childNodes])
-    #return maxWins
 
 def getScore(node):
     try:
@@ -58,7 +57,7 @@ def playerMove(node):
             return findNode(node.childNodes, move)
 
         if move > 0 and move < 10:
-            print(str(move) + " is not available.")
+            print(str(move) + " is already taken.")
         else:
             print(str(move) + " is an invalid move.")
 
@@ -78,14 +77,11 @@ def computerMove(parentNode):
         scores = [s.score for s in parentNode.childNodes]
         if max(scores) == 1:
             return next(n for n in parentNode.childNodes if n.score == min(scores))
-            #return bestMove
         else:
             return next(n for n in parentNode.childNodes if n.maxWins == maxWins)
-            #return bestMove
     
     maxWins = max([n.maxWins for n in parentNode.childNodes])
-    return next(n for n in parentNode.childNodes if n.maxWins == maxWins)
-    #return bestMove
+    return next(n for n in parentNode.childNodes if n.maxWins == maxWins) ###
 
 def printBoard(board):
     b = [" "]*9
@@ -131,7 +127,6 @@ def XorO():
             print('Invalid response.')
 
 def playForPlayer(node):
-    #node = computerMove(playerMove(node))
     player = playerMove(node)
     if player.childNodes == []:
         printBoard(player.board)
@@ -153,11 +148,11 @@ def playForComputer(node):
     if computer.childNodes == []:
         print("It's a Draw.")
         return
-    player = playerMove(computer)
+    player = playerMove(computer) ###
     playForComputer(player)
 
 def playAgain():
-    print('Do you want to play again? (yes or no)')
+    print('Do you want to play again? (y/n)')
     return input().lower().startswith('y')
 
 
