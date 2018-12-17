@@ -23,8 +23,8 @@ class Node(object) :
             self.score = self.state
 
 def getMaxWins(node):
-    maxWins = sum([k.maxWins for k in node.childNodes])
-    return maxWins
+    return sum([k.maxWins for k in node.childNodes])
+    #return maxWins
 
 def getScore(node):
     try:
@@ -46,45 +46,63 @@ def findNode(nodes, move):
     return next(n for n in nodes if n.move == move)
 
 def playerMove(node):
-    move = int(input("Your Move: "))
-    #x = availableMoves(node.board)
-    if move in availableMoves(node.board):
-        return findNode(node.childNodes, move)
+    while True:
+        move = None
+        try:
+            move = int(input("Your Move: "))
+        except:
+            print("Invalid response. Must be an integer")
+            continue
+
+        if move in availableMoves(node.board):
+            return findNode(node.childNodes, move)
+
+        if move > 0 and move < 10:
+            print(str(move) + " is not available.")
+        else:
+            print(str(move) + " is an invalid move.")
 
 def computerMove(parentNode):
     bestMove = None
     try:
-        for n in parentNode.childNodes:
-            if n.state != 0:
-                return n
+        for childNode in parentNode.childNodes:
+            if childNode.state != 0:
+                bestMove = childNode
     except:
-        return parentNode.childNodes
-
-    if parentNode.isX == 1:
-        score = min([s.score for s in parentNode.childNodes])
-        bestMove = next(n for n in parentNode.childNodes if n.score == score)
+        bestMove = parentNode.childNodes
+    if bestMove != None:
         return bestMove
 
+    if parentNode.isX == 1:
+        maxWins = min([n.maxWins for n in parentNode.childNodes])
+        scores = [s.score for s in parentNode.childNodes]
+        if max(scores) == 1:
+            return next(n for n in parentNode.childNodes if n.score == min(scores))
+            #return bestMove
+        else:
+            return next(n for n in parentNode.childNodes if n.maxWins == maxWins)
+            #return bestMove
+    
     maxWins = max([n.maxWins for n in parentNode.childNodes])
-    bestMove = next(n for n in parentNode.childNodes if n.maxWins == maxWins)
-    return bestMove
+    return next(n for n in parentNode.childNodes if n.maxWins == maxWins)
+    #return bestMove
 
 def printBoard(board):
-        b = [" "]*9
-        for x in range(0, 9) :
-            if (board[x] == True) :
-                b[x] = "X"
-            if (board[x] == False) :
-                b[x] = "O"
-        print('     |     |     ')
-        print('  ' + b[0] + '  |  ' + b[1] + '  |  ' + b[2])
-        print('_____|_____|_____')
-        print('     |     |     ')
-        print('  ' + b[3] + '  |  ' + b[4] + '  |  ' + b[5])
-        print('_____|_____|_____')
-        print('     |     |     ')
-        print('  ' + b[6] + '  |  ' + b[7] + '  |  ' + b[8])
-        print('     |     |     ')
+    b = [" "]*9
+    for x in range(0, 9) :
+        if (board[x] == True) :
+            b[x] = "X"
+        if (board[x] == False) :
+            b[x] = "O"
+    print('     |     |     ')
+    print('  ' + b[0] + '  |  ' + b[1] + '  |  ' + b[2])
+    print('_____|_____|_____')
+    print('     |     |     ')
+    print('  ' + b[3] + '  |  ' + b[4] + '  |  ' + b[5])
+    print('_____|_____|_____')
+    print('     |     |     ')
+    print('  ' + b[6] + '  |  ' + b[7] + '  |  ' + b[8])
+    print('     |     |     ')
 
 def state(b, isX):
     if ((b[0] == b[1] == b[2] == isX) or
